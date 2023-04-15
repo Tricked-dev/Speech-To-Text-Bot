@@ -15,6 +15,7 @@ use serenity::{
 
 use anyhow::{anyhow, Result};
 use once_cell::sync::Lazy;
+use tracing::{debug, error, info};
 use whisper_rs::{FullParams, SamplingStrategy, WhisperContext};
 
 struct Handler;
@@ -72,6 +73,24 @@ impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(comp) = interaction {
             let result: Result<()> = async {
+                tracing::debug!("command: {} ran", &comp.data.name);
+                if comp.data.kind == CommandType::ChatInput {
+                    let content = match comp.data.name.as_str() {
+                        "help" => "You have to right click a voice message and then select `Apps -> Transcribe Message` to use this bot for more info visit the [Github Repo](https://github.com/Tricked-dev/Speech-To-Text-Bot)",
+                        "invite" => "You can invite the bot with [this link](https://discord.com/oauth2/authorize?client_id=838065007971139594&scope=bot%20applications.commands&permissions=0)",
+                        "terms" => "<https://github.com/Tricked-dev/Speech-To-Text-Bot/blob/master/TERMS.md>",
+                        "privacy" => "<https://github.com/Tricked-dev/Speech-To-Text-Bot/blob/master/PRIVACY.md>",
+                        _ => "Unknown Command"
+                    };
+
+                    comp.create_interaction_response(&ctx.http, |response| {
+                        response.kind(InteractionResponseType::ChannelMessageWithSource).interaction_response_data(|f|f.content(content))
+                    })
+                    .await?;
+
+                    return Ok(());
+                }
+
                 comp.create_interaction_response(&ctx.http, |response| {
                     response.kind(InteractionResponseType::DeferredChannelMessageWithSource)
                 })
@@ -84,7 +103,7 @@ impl EventHandler for Handler {
                             response.content("Sorry that message doesn't have any voice attached")
                         })
                         .await?;
-                        return Err(anyhow!("No file on message"));
+                        return Ok(());
                     }
                 };
 
@@ -95,6 +114,16 @@ impl EventHandler for Handler {
                     .await?;
                     return Ok(());
                 }
+
+                if file.filename.contains([' ', '/', '-', ',', '!', '"', '\'']) && file.filename != "voice-message.ogg"
+                {
+                    comp.edit_original_interaction_response(&ctx.http, |response| {
+                        response.content("Sorry thats a illegal filename!")
+                    })
+                    .await?;
+                    return Ok(());
+                }
+
                 if file.size > 2097152 {
                     comp.edit_original_interaction_response(&ctx.http, |response| {
                         response.content("Sorry file too big!")
@@ -114,28 +143,49 @@ impl EventHandler for Handler {
 
                 let end = format!("{} {}", msg.link(), result.trim());
 
-                comp.edit_original_interaction_response(&ctx.http, |response| response.content(end))
-                    .await?;
+                comp.edit_original_interaction_response(&ctx.http, |response| {
+                    response.content(end).allowed_mentions(|x| x)
+                })
+                .await?;
                 Ok(())
             }
             .await;
             if let Err(e) = result {
-                println!("{e:?}");
+                error!("{e:?}");
             }
         };
     }
 
     async fn ready(&self, ctx: Context, ready: Ready) {
-        Command::set_global_application_commands(&ctx.http, |commands| {
+        let ok = Command::set_global_application_commands(&ctx.http, |commands| {
             commands.create_application_command(|cmd| cmd.kind(CommandType::Message).name("Transcribe Message"));
-            commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("privacy"));
-            commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("terms"));
-            commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("invite"));
-            commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("help"))
+            commands.create_application_command(|cmd| {
+                cmd.kind(CommandType::ChatInput)
+                    .name("privacy")
+                    .description("Privacy Policy")
+            });
+            commands.create_application_command(|cmd| {
+                cmd.kind(CommandType::ChatInput)
+                    .name("terms")
+                    .description("Terms Of Service")
+            });
+            commands.create_application_command(|cmd| {
+                cmd.kind(CommandType::ChatInput)
+                    .name("invite")
+                    .description("Invite The Bot")
+            });
+            commands.create_application_command(|cmd| {
+                cmd.kind(CommandType::ChatInput)
+                    .name("help")
+                    .description("The Help Center")
+            })
         })
-        .await
-        .ok();
-        println!("{} is connected!", ready.user.name);
+        .await;
+        info!(
+            "{} is connected! registering commands ok: {}",
+            ready.user.name,
+            ok.is_ok()
+        );
     }
 }
 
@@ -158,7 +208,7 @@ async fn speech_to_text(file: &str) -> Result<String> {
         .map_err(|x| anyhow!(format!("{x:?}")))?;
 
     let num_segments = ctx.full_n_segments();
-
+    debug!("parsed: {file} segments: {num_segments}");
     let res = (0..num_segments)
         .flat_map(|i| ctx.full_get_segment_text(i).map_err(|x| anyhow!(format!("{x:?}"))))
         .collect::<Vec<String>>()
@@ -168,6 +218,7 @@ async fn speech_to_text(file: &str) -> Result<String> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    tracing_subscriber::fmt().compact().init();
     Lazy::force(&WHISPER_CTX);
     let mut client = Client::builder(std::env::var("TOKEN").unwrap(), GatewayIntents::empty())
         .event_handler(Handler)
