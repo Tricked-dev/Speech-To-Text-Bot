@@ -4,7 +4,6 @@ Speech To Text Bot is a Discord bot that transcribes voice messages.
 
 ![image](https://user-images.githubusercontent.com/72335827/232255244-c36283ab-934b-4576-a98c-be3e4a96fea0.png)
 
-
 ## Commands
 
 The bot supports the following commands:
@@ -14,7 +13,7 @@ The bot supports the following commands:
 - `/invite`: Displays an invite link to add the bot to your Discord server.
 - `/help`: Displays a list of available commands.
 
-In addition to the slash commands, the bot also supports a message context command. Simply right click the message and click `Transcribe Message` and the bot will transcribe the message and send it in the same channel.
+In addition to the slash commands, the bot also supports a message context command. Simply right click the message and click `Apps -> Transcribe Message` and the bot will transcribe the message and send it in the same channel.
 
 ### Help
 
