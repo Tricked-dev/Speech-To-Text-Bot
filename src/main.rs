@@ -1,12 +1,17 @@
-use std::io::Cursor;
-use std::path::PathBuf;
+use std::{io::Cursor, path::PathBuf};
 
-use serenity::async_trait;
-use serenity::model::application::command::Command;
-use serenity::model::application::interaction::{Interaction, InteractionResponseType};
-use serenity::model::gateway::Ready;
-use serenity::model::prelude::command::CommandType;
-use serenity::prelude::*;
+use serenity::{
+    async_trait,
+    model::{
+        application::{
+            command::Command,
+            interaction::{Interaction, InteractionResponseType},
+        },
+        gateway::Ready,
+        prelude::command::CommandType,
+    },
+    prelude::*,
+};
 
 use anyhow::{anyhow, Result};
 use once_cell::sync::Lazy;
@@ -83,9 +88,7 @@ impl EventHandler for Handler {
                     }
                 };
 
-                if file.content_type != Some("audio/ogg".to_lowercase())
-                    || !file.filename.ends_with(".ogg")
-                {
+                if file.content_type != Some("audio/ogg".to_lowercase()) || !file.filename.ends_with(".ogg") {
                     comp.edit_original_interaction_response(&ctx.http, |response| {
                         response.content("Sorry thats not a voice message!")
                     })
@@ -111,10 +114,8 @@ impl EventHandler for Handler {
 
                 let end = format!("{} {}", msg.link(), result.trim());
 
-                comp.edit_original_interaction_response(&ctx.http, |response| {
-                    response.content(end)
-                })
-                .await?;
+                comp.edit_original_interaction_response(&ctx.http, |response| response.content(end))
+                    .await?;
                 Ok(())
             }
             .await;
@@ -126,15 +127,10 @@ impl EventHandler for Handler {
 
     async fn ready(&self, ctx: Context, ready: Ready) {
         Command::set_global_application_commands(&ctx.http, |commands| {
-            commands.create_application_command(|cmd| {
-                cmd.kind(CommandType::Message).name("Transcribe Message")
-            });
-            commands
-                .create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("privacy"));
-            commands
-                .create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("terms"));
-            commands
-                .create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("invite"));
+            commands.create_application_command(|cmd| cmd.kind(CommandType::Message).name("Transcribe Message"));
+            commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("privacy"));
+            commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("terms"));
+            commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("invite"));
             commands.create_application_command(|cmd| cmd.kind(CommandType::ChatInput).name("help"))
         })
         .await
@@ -164,10 +160,7 @@ async fn speech_to_text(file: &str) -> Result<String> {
     let num_segments = ctx.full_n_segments();
 
     let res = (0..num_segments)
-        .flat_map(|i| {
-            ctx.full_get_segment_text(i)
-                .map_err(|x| anyhow!(format!("{x:?}")))
-        })
+        .flat_map(|i| ctx.full_get_segment_text(i).map_err(|x| anyhow!(format!("{x:?}"))))
         .collect::<Vec<String>>()
         .join("\n");
     Ok(res)
