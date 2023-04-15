@@ -2,6 +2,9 @@
 
 Speech To Text Bot is a Discord bot that transcribes voice messages.
 
+![image](https://user-images.githubusercontent.com/72335827/232255244-c36283ab-934b-4576-a98c-be3e4a96fea0.png)
+
+
 ## Commands
 
 The bot supports the following commands:
