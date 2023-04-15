@@ -72,7 +72,16 @@ impl EventHandler for Handler {
                 })
                 .await?;
                 let msg = comp.data.resolved.messages.iter().next().unwrap().1;
-                let file = msg.attachments.get(0).unwrap();
+                let file = match msg.attachments.get(0) {
+                    Some(v) => v,
+                    None => {
+                        comp.edit_original_interaction_response(&ctx.http, |response| {
+                            response.content("Sorry that message doesn't have any voice attached")
+                        })
+                        .await?;
+                        return Err(anyhow!("No file on message"));
+                    }
+                };
 
                 if file.content_type != Some("audio/ogg".to_lowercase())
                     || !file.filename.ends_with(".ogg")
