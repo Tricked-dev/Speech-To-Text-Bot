@@ -136,7 +136,9 @@ impl EventHandler for Handler {
                 let out = fname.replace(".ogg", ".wav");
 
                 //These functions do fs stuff and cant
-                fetch_url(file.url.clone(), fname.clone()).await?;
+                if std::fs::metadata(fname.clone()).is_err() {
+                    fetch_url(file.url.clone(), fname.clone()).await?;
+                }
                 transcode_video(&fname, &out).await?;
 
                 let result = speech_to_text(&out).await?;
@@ -220,9 +222,12 @@ async fn speech_to_text(file: &str) -> Result<String> {
 async fn main() -> Result<()> {
     tracing_subscriber::fmt().compact().init();
     Lazy::force(&WHISPER_CTX);
-    let mut client = Client::builder(std::env::var("TOKEN").unwrap(), GatewayIntents::empty())
-        .event_handler(Handler)
-        .await?;
+    let mut client = Client::builder(
+        std::env::var("TOKEN").expect("Please set the TOKEN environment variable"),
+        GatewayIntents::empty(),
+    )
+    .event_handler(Handler)
+    .await?;
 
     client.start().await?;
     Ok(())

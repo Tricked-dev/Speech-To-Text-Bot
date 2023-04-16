@@ -25,6 +25,14 @@ To add Speech To Text Bot to your Discord server, please use the following invit
 
 [Invite Link][invite]
 
+### Speed
+
+The bot's performance is currently limited due to being hosted on a suboptimal VPS, which may result in delays of up to a minute for simple text. To help improve the bot's hosting and development, please consider supporting us by sponsoring on Github at the following link: <https://github.com/sponsors/Tricked-dev>. Thank you for your understanding and support!
+
+### Development
+
+See [Development](./DEVELOPMENT.md)
+
 ### Privacy
 
 Speech To Text Bot is committed to protecting the privacy of its users. The bot only saves downloaded voice messages for 24 hours and does not listen to them. For more information, please refer to our privacy policy.

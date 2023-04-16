@@ -39,7 +39,3 @@ If you have any questions or concerns about this Privacy Policy or our practices
 Conclusion
 
 By using our Discord bot, you signify your acceptance of this Privacy Policy. If you do not agree to this Privacy Policy, please do not use our Service.
-
----
-
-Courtesy of ChatGPT

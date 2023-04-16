@@ -47,7 +47,3 @@ Changes to these Terms
 We reserve the right to update or modify these Terms at any time without prior notice. We encourage you to review these Terms periodically for any changes. Your continued use of the Service following the posting of any changes to these Terms constitutes your acceptance of those changes.
 
 Contacting Us
-
----
-
-Courtesy of ChatGPT
