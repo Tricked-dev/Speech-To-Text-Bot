@@ -9,7 +9,11 @@ default-run = "discordstt"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 anyhow = "1.0.70"
+autometrics = { version = "0.3.3", default-features = false, features = ["once_cell", "prometheus", "prometheus-exporter"] }
 hound = "3.5.0"
+http = "0.2.9"
+http-body-util = "0.1.0-rc.2"
+hyper = { version = "1.0.0-rc.3", features = ["http1", "server", "http-body-util"] }
 once_cell = { version = "1.17.1", features = ["parking_lot"] }
 reqwest = "0.11.16"
 serenity = { version = "0.11.5", features = [
