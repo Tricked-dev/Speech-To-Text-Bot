@@ -43,7 +43,13 @@ pub async fn handle_message_ctx(ctx: Context, interaction: ApplicationCommandInt
     }
     transcode_video(&fname, &out).await?;
 
-    let result = speech_to_text(out).await?;
+    let lang_id = match (interaction.guild_locale.clone(), interaction.locale.clone()) {
+        (_, u_locale) if !u_locale.contains("en") => u_locale,
+        (Some(g_locale), _) if !g_locale.contains("en") => g_locale,
+        (_, locale) => locale,
+    };
+
+    let result = speech_to_text(out, lang_id).await?;
 
     let end = format!("{} {}", msg.link(), result.trim());
 

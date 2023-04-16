@@ -1,9 +1,11 @@
 use std::{fs, process::Command};
 
-fn main() -> anyhow::Result<()> {
-    const WHISPER_FOLDER: &str = "whisper.cpp";
-    const MODEL_NAME: &str = "medium";
+#[path = "../model_data.rs"]
+mod data;
 
+use data::*;
+
+fn main() -> anyhow::Result<()> {
     if fs::read_dir(WHISPER_FOLDER).is_err() {
         Command::new("git")
             .arg("clone")

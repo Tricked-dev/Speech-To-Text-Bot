@@ -22,6 +22,7 @@ use handle_message_ctx::handle_message_ctx;
 mod handle_message_ctx;
 mod handle_slash;
 mod metrics_server;
+mod model_data;
 mod utils;
 
 struct Handler;
@@ -38,7 +39,6 @@ impl EventHandler for Handler {
                 .await?;
 
                 tracing::debug!("command: {} ran", &comp.data.name);
-
                 match comp.data.kind {
                     CommandType::ChatInput => handle_slash(ctx, comp).await,
                     CommandType::Message => handle_message_ctx(ctx, comp).await,

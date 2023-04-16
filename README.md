@@ -17,6 +17,11 @@ In addition to the slash commands, the bot also supports a message context comma
 
 ![image](https://user-images.githubusercontent.com/72335827/232306462-e4caab5e-aa54-4c60-b64f-fb2d24548838.png)
 
+### Translating
+
+1. The bot reads the user locale first to determine if its a non english locale if so it will translate the voice message to that locale and send it as response
+2. The bot then reads the guild locale first to determine if its a non english locale if so it will translate the voice message to that locale and send it as response
+3. It will default to english if nothing is different
 
 ### Help
 
@@ -34,7 +39,7 @@ The bot's performance is currently limited due to being hosted on a suboptimal V
 
 ### Development
 
-See [Development](./DEVELOPMENT.md)
+See [Contributing](./CONTRIBUTING.md)
 
 ### Privacy
 
