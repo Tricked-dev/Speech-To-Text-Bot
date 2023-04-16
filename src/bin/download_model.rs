@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
             .status()?;
     }
 
-    if fs::read("ggml-medium.bin").is_err() {
+    if fs::read(format!("ggml-{MODEL_NAME}.bin")).is_err() {
         let file = format!("{WHISPER_FOLDER}/models/ggml-{MODEL_NAME}.bin");
         if fs::read(&file).is_err() {
             Command::new("bash")
