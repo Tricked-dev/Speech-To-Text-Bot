@@ -15,6 +15,9 @@ The bot supports the following commands:
 
 In addition to the slash commands, the bot also supports a message context command. Simply right click the message and click `Apps -> Transcribe Message` and the bot will transcribe the message and send it in the same channel.
 
+![image](https://user-images.githubusercontent.com/72335827/232306462-e4caab5e-aa54-4c60-b64f-fb2d24548838.png)
+
+
 ### Help
 
 If you need help using Speech To Text Bot, please use the `/help` command.
