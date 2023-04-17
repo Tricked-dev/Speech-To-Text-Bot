@@ -1,6 +1,6 @@
 Privacy Policy for Discord Voice Message Transcription Bot
 
-Effective Date: 15-04-2023
+Effective Date: 17-04-2023
 
 Introduction
 
@@ -14,7 +14,7 @@ Our bot collects audio files from Discord channels in order to transcribe voice 
 
 Use of Information
 
-We use the audio files collected from Discord channels to transcribe voice messages. The transcribed messages are saved on our server for up to 24 hours before they are deleted. We do not listen to the audio files or transcribed messages, and we do not share them with any third parties.
+We use the audio files collected from Discord channels to transcribe voice messages. The transcribed messages are saved on our server for up to the duration the bot responds before they are deleted. We do not listen to the audio files or transcribed messages, and we do not share them with any third parties.
 
 Disclosure of Information
 
