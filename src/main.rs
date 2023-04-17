@@ -1,5 +1,8 @@
+use std::{fs, sync::Arc, time::Duration};
+
 use anyhow::Result;
 use autometrics::autometrics;
+use dashmap::DashMap;
 use metrics_server::start_metrics;
 use once_cell::sync::Lazy;
 use serenity::{
@@ -14,6 +17,7 @@ use serenity::{
     },
     prelude::*,
 };
+use tokio::time;
 use tracing::{error, info};
 
 use crate::{handle_slash::handle_slash, utils::*};
@@ -25,7 +29,8 @@ mod metrics_server;
 mod model_data;
 mod utils;
 
-struct Handler;
+#[derive(Default, Debug)]
+struct Handler(Arc<DashMap<String, String>>);
 
 #[async_trait]
 impl EventHandler for Handler {
@@ -41,7 +46,7 @@ impl EventHandler for Handler {
                 tracing::debug!("command: {} ran", &comp.data.name);
                 match comp.data.kind {
                     CommandType::ChatInput => handle_slash(ctx, comp).await,
-                    CommandType::Message => handle_message_ctx(ctx, comp).await,
+                    CommandType::Message => handle_message_ctx(ctx, comp, &self.0).await,
                     _ => Ok(()),
                 }
             }
@@ -77,6 +82,7 @@ impl EventHandler for Handler {
             })
         })
         .await;
+
         info!(
             "{} is connected! registering commands ok: {}",
             ready.user.name,
@@ -90,11 +96,23 @@ impl EventHandler for Handler {
 async fn main() -> Result<()> {
     tracing_subscriber::fmt().compact().init();
     Lazy::force(&WHISPER_CTX);
+    fs::create_dir_all("./out")?;
+
+    let handler = Handler::default();
+
+    let cache = handler.0.clone();
+    tokio::spawn(async move {
+        loop {
+            cache.clear();
+            time::sleep(Duration::from_secs(60 * 60)).await;
+        }
+    });
+
     let mut client = Client::builder(
         std::env::var("TOKEN").expect("Please set the TOKEN environment variable"),
         GatewayIntents::empty(),
     )
-    .event_handler(Handler)
+    .event_handler(handler)
     .await?;
 
     tokio::spawn(start_metrics());

@@ -10,6 +10,7 @@ default-run = "discordstt"
 [dependencies]
 anyhow = "1.0.70"
 autometrics = { version = "0.3.3", default-features = false, features = ["once_cell", "prometheus", "prometheus-exporter"] }
+dashmap = { version = "5.4.0", features = ["serde"] }
 hound = "3.5.0"
 http = "0.2.9"
 http-body-util = "0.1.0-rc.2"
