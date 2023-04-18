@@ -49,6 +49,10 @@ Speech To Text Bot is committed to protecting the privacy of its users. The bot 
 
 By using Speech To Text Bot, you agree to be bound by our terms of service. Please read them carefully before using the bot.
 
+## Advanced
+
+The bot supports any type of video/audio while transcribing
+
 ## Credits
 
 Speech To Text Bot was created by tricked#3777. The bot uses whisper.cpp for voice transcription.
