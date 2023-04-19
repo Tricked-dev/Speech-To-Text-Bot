@@ -1,12 +1,12 @@
 //credit m1guelpf https://github.com/m1guelpf/whisper-cli-rs/blob/main/src/ffmpeg_decoder.rs
 
 use anyhow::{anyhow, Result};
-use audrey::Reader;
 use std::env::temp_dir;
 use std::fs::File;
 use std::path::Path;
 use std::process::Stdio;
 use tokio::process::Command;
+
 // ffmpeg -i input.mp3 -ar 16000 output.wav
 async fn use_ffmpeg<P: AsRef<Path>>(input_path: P) -> Result<Vec<i16>> {
     let temp_file = temp_dir().join(format!("{}.wav", uuid::Uuid::new_v4()));
@@ -32,7 +32,7 @@ async fn use_ffmpeg<P: AsRef<Path>>(input_path: P) -> Result<Vec<i16>> {
 
     if status.success() {
         let output = File::open(&temp_file)?;
-        let mut reader = Reader::new(output)?;
+        let mut reader = hound::WavReader::new(output)?;
         let samples: Result<Vec<i16>, _> = reader.samples().collect();
         std::fs::remove_file(temp_file)?;
         samples.map_err(std::convert::Into::into)

@@ -43,7 +43,7 @@ See [Contributing](./CONTRIBUTING.md)
 
 ### Privacy
 
-Speech To Text Bot is committed to protecting the privacy of its users. The bot only saves downloaded voice messages for 24 hours and does not listen to them. For more information, please refer to our privacy policy.
+Speech To Text Bot is committed to protecting the privacy of its users. The bot only saves the voice messages / videos for as long as it takes to translate so when the bot has responded you can be sure your attachment is deleted.
 
 ### Terms of Service
 
